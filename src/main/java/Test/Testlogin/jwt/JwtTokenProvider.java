@@ -25,6 +25,16 @@ public class JwtTokenProvider {
         this.validityInMilliseconds = validityInMilliseconds;
     }
 
+    public static boolean validateToken(String jwtToken) {
+        try {
+            Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(jwtToken);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+
     //토큰 생성
     public String createToken(String subject){
         Claims claims = Jwts.claims().setSubject(subject);

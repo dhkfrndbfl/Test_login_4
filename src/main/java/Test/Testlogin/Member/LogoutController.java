@@ -1,32 +1,38 @@
 package Test.Testlogin.Member;
 
+import Test.Testlogin.jwt.JwtTokenProvider;
+import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 @Controller
 public class LogoutController {
-    private final JdbcTemplate jdbcTemplate;
+    private JwtTokenProvider jwtTokenProvider;
 
     @Autowired
-    public LogoutController(JdbcTemplate jdbcTemplate){
-        this.jdbcTemplate = jdbcTemplate;
+    public LogoutController(JwtTokenProvider jwtTokenProvider){
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @PostMapping("/logout")
-    public String logout( HttpServletRequest request){
-       HttpSession session = request.getSession(false);
-       if( session != null){
-           session.invalidate();
-       }
+    public String logout(@RequestHeader("Authorization") String token){
+        //Authorization 헤더에서 JWT토큰 추출
+        String jwtToken = token.substring(7);
 
-       String sessionID = request.getRequestedSessionId();
-       jdbcTemplate.update("DELETE FROM custom_session_table WHERE SESSION_ID = ?", sessionID);
-       return "/login";
+        //JWT 토큰 검증
+        if(JwtTokenProvider.validateToken(jwtToken)){
+            return "로그아웃 성공";
+        }
+        else {
+            return "로그아웃 실패";
+        }
     }
+
 }
