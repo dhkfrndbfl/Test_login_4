@@ -1,4 +1,4 @@
-package Test.Testlogin.EmailValidation;
+package Test.Testlogin.Email;
 
 import lombok.RequiredArgsConstructor;
 

@@ -1,12 +1,11 @@
 package Test.Testlogin.Member;
 
-import Test.Testlogin.Form.ResponseForm;
 import Test.Testlogin.Dto.MemberLoginDto;
 import Test.Testlogin.Dto.MemberSignUpDto;
+import Test.Testlogin.Email.emailCertification.CertDto.CertDto;
+import Test.Testlogin.Form.ResponseForm;
+import Test.Testlogin.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +17,19 @@ import org.springframework.web.bind.annotation.RestController;
 public class MemberController {
     //memberService를 사용하기 위해서 final로 포함한다.
     private final MemberService memberService;
+    private JwtTokenProvider jwtTokenProvider;
+
+    //인증번호 발송
+    @PostMapping("/create")
+    public ResponseForm sendCertNumber(@RequestBody CertDto certDto){
+        return memberService.sendCertNumber(certDto);
+    }
+
+    //인증번호 인증
+    @PostMapping("/check")
+    public ResponseForm checkCoedNumber(@RequestBody CertDto certDto){
+        return memberService.checkCertificationNumber(certDto);
+    }
 
     //로그인
     @PostMapping("/login")
@@ -46,5 +58,6 @@ public class MemberController {
          */
         return memberService.signUp(memberSignUpDto);
     }
+
 }
 
